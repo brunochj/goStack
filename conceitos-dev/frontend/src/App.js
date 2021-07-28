@@ -5,24 +5,31 @@ import "./App.css"
 import Header from './components/Header.js'
 
 function App(){
-    const [projects, setProjects] = useState(["Desenvolviment App", "FrontEnd Web"])
+    const [projects, setProjects] = useState([])
     
     useEffect(() => {
         api.get('projects').then(response => {
-            console.log(response)
+            setProjects(response.data)
         })
     }, []);
 
-    function handleAddProjects(){
-        // projects.push(`Novo projeto ${Date.now()}`)
-        setProjects([...projects, `Novo projeto ${Date.now()}`])
+    async function handleAddProjects(){
+        // setProjects([...projects, `Novo projeto ${Date.now()}`])
+        const response = await api.post('projects', {
+            title: `Novo projeto ${Date.now()}`,
+            owner: "Bruno Ji"
+        })
+
+        const project = response.data
+
+        setProjects([...projects, project])
     }
 
     return (
         <>
             <Header title="Projects" />
             <ul>
-                {projects.map(project => <li>{project}</li>)}
+                {projects.map(project => <li>{project.title}</li>)}
             </ul>
             <button type="button" onClick={handleAddProjects}>Adicionar novo projeto</button>
         </>
